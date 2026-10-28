@@ -1,0 +1,24 @@
+{
+  "name": "finance-growth-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "중소·중견기업 재무성장지원서비스 (Finance Team-as-a-Service) 포털",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "seed": "node --disable-warning=ExperimentalWarning scripts/seed.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jason1210-ai/managedservice.git"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^5.3.0"
+  }
+}
