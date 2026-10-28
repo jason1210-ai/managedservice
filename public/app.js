@@ -7,6 +7,11 @@
 
   const state = { me: null, catalog: null };
 
+  // 데모 빌드(window.FGS_DEMO)는 iframe 안에서 돌기 때문에 주소창 해시 대신 메모리에서 경로를 관리한다.
+  const DEMO = Boolean(window.FGS_DEMO);
+  let memoryHash = '#/';
+  const currentHash = () => (DEMO ? memoryHash : location.hash || '#/');
+
   const PHASE_LABEL = { none: '미시작', assessment: '진단', implementation: '구축', operation: '운영' };
   const STATUS_LABEL = {
     submitted: '접수',
@@ -58,7 +63,10 @@
   }
 
   const go = (hash) => {
-    if (location.hash === hash) render();
+    if (DEMO) {
+      memoryHash = hash;
+      render();
+    } else if (location.hash === hash) render();
     else location.hash = hash;
   };
 
@@ -98,7 +106,7 @@
         <button class="link" data-action="logout">로그아웃</button>`;
     }
     for (const a of nav.querySelectorAll('a')) {
-      a.classList.toggle('current', a.getAttribute('href') === (location.hash || '#/'));
+      a.classList.toggle('current', a.getAttribute('href') === currentHash().split('?')[0]);
     }
   }
 
@@ -194,7 +202,29 @@
           <button class="btn" type="submit">로그인</button>
         </form>
         <p class="muted">아직 회원이 아니신가요? <a href="#/register">기업 회원가입</a></p>
+        ${
+          DEMO
+            ? `<div class="demo-accounts">
+                <p class="muted">데모 계정으로 바로 둘러보기</p>
+                ${[
+                  ['h-pharma@demo.local', 'H제약 (중견기업)'],
+                  ['g-ai@demo.local', 'G에이아이 (중소기업)'],
+                  ['admin@demo.local', 'PwC 담당자 (관리자)'],
+                ]
+                  .map(([email, label]) => `<button type="button" class="btn ghost" data-demo-login="${email}">${label}</button>`)
+                  .join('')}
+              </div>`
+            : ''
+        }
       </section>`;
+    view.querySelectorAll('[data-demo-login]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const form = view.querySelector('#login-form');
+        form.elements.email.value = b.dataset.demoLogin;
+        form.elements.password.value = 'Demo1234!';
+        form.requestSubmit();
+      }),
+    );
     view.querySelector('#login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -416,7 +446,7 @@
     view.innerHTML = `
       <header class="page-head">
         <div><h1>진단 결과</h1><p class="muted">${date(r.createdAt)} 진단</p></div>
-        <button class="btn ghost" data-action="print">인쇄 / PDF 저장</button>
+        ${DEMO ? '' : '<button class="btn ghost" data-action="print">인쇄 / PDF 저장</button>'}
       </header>
       <section class="card score-summary">
         <div><p class="kpi">${r.total}<small>점</small></p><p class="strong">${esc(r.label)}</p></div>
@@ -445,7 +475,7 @@
           }
         </article>
       </div>`;
-    view.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
+    view.querySelector('[data-action="print"]')?.addEventListener('click', () => window.print());
   }
 
   async function services(params) {
@@ -675,8 +705,15 @@
         const m = data.months.find((x) => x.ym === editYm);
         for (const key of ['ym', 'revenue', 'cogs', 'opex', 'cashBalance']) form.elements[key].value = m[key];
         form.scrollIntoView({ behavior: 'smooth' });
-      } else if (delYm && confirm(`${delYm} 실적을 삭제할까요?`)) {
+      } else if (delYm) {
+        // 브라우저 확인창 대신 버튼을 두 번 누르게 해서 실수로 지우는 것을 막는다.
+        if (e.target.dataset.confirming !== 'true') {
+          e.target.dataset.confirming = 'true';
+          e.target.textContent = '삭제 확인';
+          return;
+        }
         await api(`/api/financials/${delYm}`, { method: 'DELETE' });
+        toast(`${delYm} 실적이 삭제되었습니다.`);
         financials();
       }
     });
@@ -831,7 +868,7 @@
   ];
 
   async function render() {
-    const [path, query] = (location.hash || '#/').split('?');
+    const [path, query] = currentHash().split('?');
     const route = routes.find((r) => r.re.test(path));
     renderNav();
     if (!route) {
@@ -863,7 +900,16 @@
     state.catalog = await api('/api/catalog');
     const me = await api('/api/auth/me').catch(() => null);
     state.me = me?.user ? me : null;
-    window.addEventListener('hashchange', render);
+    if (DEMO) {
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#"]');
+        if (!a) return;
+        e.preventDefault();
+        go(a.getAttribute('href'));
+      });
+    } else {
+      window.addEventListener('hashchange', render);
+    }
     render();
   }
 

@@ -1,17 +1,85 @@
+/* 라이트/다크 공통 토큰. 다크 값은 아래 두 블록에서만 재정의한다. */
 :root {
   --brand: #d04a02;
+  --brand-strong: #b13f02;
   --brand-2: #eb8c00;
   --brand-soft: #fdf1e8;
+  --brand-pale: #f6c79f;
+  --on-brand: #ffffff;
   --ink: #2d2d2d;
+  --on-ink: #ffffff;
   --muted: #6b6b6b;
   --line: #e5e1dc;
+  --track: #ece7e1;
+  --axis: #bbbbbb;
   --bg: #f7f5f2;
   --card: #ffffff;
   --good: #2e8b57;
+  --good-soft: #e3f3ea;
   --ok: #eb8c00;
+  --ok-soft: #fff1d6;
+  --ok-ink: #9a5b00;
   --warn: #e0301e;
   --bad: #a32020;
+  --bad-soft: #fbe4e1;
+  --logo-bg: transparent;
   --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --brand: #ff7a2e;
+    --brand-strong: #ff9152;
+    --brand-2: #ffa733;
+    --brand-soft: #3a2418;
+    --brand-pale: #8a4a22;
+    --on-brand: #1a1410;
+    --ink: #ece7e2;
+    --on-ink: #1a1410;
+    --muted: #a8a19a;
+    --line: #3a3430;
+    --track: #332d29;
+    --axis: #5c554f;
+    --bg: #171412;
+    --card: #221e1b;
+    --good: #4cc286;
+    --good-soft: #1c3328;
+    --ok: #ffa733;
+    --ok-soft: #3a2c12;
+    --ok-ink: #ffc46b;
+    --warn: #ff6b57;
+    --bad: #ff8a7a;
+    --bad-soft: #3d1d1a;
+    --logo-bg: #f4efe9;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --brand: #ff7a2e;
+  --brand-strong: #ff9152;
+  --brand-2: #ffa733;
+  --brand-soft: #3a2418;
+  --brand-pale: #8a4a22;
+  --on-brand: #1a1410;
+  --ink: #ece7e2;
+  --on-ink: #1a1410;
+  --muted: #a8a19a;
+  --line: #3a3430;
+  --track: #332d29;
+  --axis: #5c554f;
+  --bg: #171412;
+  --card: #221e1b;
+  --good: #4cc286;
+  --good-soft: #1c3328;
+  --ok: #ffa733;
+  --ok-soft: #3a2c12;
+  --ok-ink: #ffc46b;
+  --warn: #ff6b57;
+  --bad: #ff8a7a;
+  --bad-soft: #3d1d1a;
+  --logo-bg: #f4efe9;
+  color-scheme: dark;
 }
 
 * {
@@ -58,7 +126,9 @@ small {
 .container {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 24px 16px 64px;
+  padding-block: 24px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
   outline: none;
 }
 
@@ -66,15 +136,17 @@ small {
 
 .topbar {
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 10px 24px;
-  background: #fff;
+  padding-block: 10px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  background: var(--card);
   border-bottom: 3px solid var(--brand);
 }
 
@@ -89,6 +161,9 @@ small {
 
 .brand img {
   height: 32px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: var(--logo-bg);
 }
 
 .nav {
@@ -117,7 +192,9 @@ small {
 .footer {
   text-align: center;
   color: var(--muted);
-  padding: 24px;
+  padding-block: 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
   font-size: 0.85em;
 }
 
@@ -129,7 +206,7 @@ small {
   border-radius: 6px;
   padding: 10px 18px;
   background: var(--brand);
-  color: #fff !important;
+  color: var(--on-brand) !important;
   font: inherit;
   font-weight: 600;
   text-decoration: none;
@@ -138,7 +215,7 @@ small {
 }
 
 .btn:hover {
-  background: #b13f02;
+  background: var(--brand-strong);
 }
 
 .btn.ghost {
@@ -206,7 +283,7 @@ textarea {
   padding: 9px 10px;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #fff;
+  background: var(--card);
 }
 
 input:focus,
@@ -255,15 +332,15 @@ legend {
 }
 
 .grid.two {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
 }
 
 .grid.three {
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 }
 
 .grid.four {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
 }
 
 .grid > .card {
@@ -356,7 +433,7 @@ legend {
   padding: 48px 32px;
   border-radius: var(--radius);
   background: linear-gradient(120deg, var(--brand) 0%, var(--brand-2) 100%);
-  color: #fff;
+  color: var(--on-brand);
 }
 
 .hero h1 {
@@ -382,14 +459,14 @@ legend {
 }
 
 .hero .btn {
-  background: #fff;
+  background: var(--on-brand);
   color: var(--brand) !important;
 }
 
 .hero .btn.ghost {
   background: transparent;
-  color: #fff !important;
-  border-color: #fff;
+  color: var(--on-brand) !important;
+  border-color: var(--on-brand);
 }
 
 .phase header {
@@ -426,7 +503,7 @@ legend {
   display: flex;
   flex-direction: column;
   padding: 12px 24px;
-  background: #ece7e1;
+  background: var(--track);
   color: var(--muted);
   clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%);
 }
@@ -436,13 +513,13 @@ legend {
 }
 
 .stepper li.done {
-  background: #f6c79f;
+  background: var(--brand-pale);
   color: var(--ink);
 }
 
 .stepper li.active {
   background: var(--brand);
-  color: #fff;
+  color: var(--on-brand);
 }
 
 .stepper li span,
@@ -471,7 +548,7 @@ legend {
 }
 
 .bar-bg {
-  fill: #ece7e1;
+  fill: var(--track);
 }
 
 .bar-fg.good {
@@ -543,7 +620,7 @@ legend {
 
 .phase-choice {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 12px;
 }
 
@@ -618,12 +695,12 @@ td textarea {
   padding: 1px 8px;
   font-size: 0.85em;
   font-weight: 600;
-  background: #ece7e1;
+  background: var(--track);
 }
 
 .status.reviewing {
-  background: #fff1d6;
-  color: #9a5b00;
+  background: var(--ok-soft);
+  color: var(--ok-ink);
 }
 
 .status.in_progress {
@@ -632,12 +709,12 @@ td textarea {
 }
 
 .status.completed {
-  background: #e3f3ea;
+  background: var(--good-soft);
   color: var(--good);
 }
 
 .status.rejected {
-  background: #fbe4e1;
+  background: var(--bad-soft);
   color: var(--bad);
 }
 
@@ -663,11 +740,11 @@ ul.plain li {
 }
 
 .chart .axis {
-  stroke: #bbb;
+  stroke: var(--axis);
 }
 
 .c-rev {
-  fill: #f6c79f;
+  fill: var(--brand-pale);
 }
 
 .c-op {
@@ -705,7 +782,7 @@ ul.plain li {
 }
 
 .sw.rev {
-  background: #f6c79f;
+  background: var(--brand-pale);
 }
 
 .sw.op {
@@ -751,13 +828,14 @@ ul.plain li {
 
 .toast {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  right: calc(20px + env(safe-area-inset-right, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
   max-width: 360px;
   padding: 12px 16px;
   border-radius: 8px;
   background: var(--ink);
-  color: #fff;
+  color: var(--on-ink);
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.2s;
@@ -777,9 +855,115 @@ ul.plain li {
   background: var(--warn);
 }
 
+/* 데모 빌드 전용 요소 */
+.demo-banner {
+  background: var(--brand-soft);
+  color: var(--ink);
+  font-size: 0.85em;
+  text-align: center;
+  padding-block: 6px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.demo-banner button {
+  margin-left: 8px;
+}
+
+.demo-accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.demo-accounts p {
+  margin: 0;
+}
+
 @media (max-width: 640px) {
+  body {
+    font-size: 15px;
+  }
+
+  /* 모바일: 로고 줄 아래에 메뉴를 두고, 넘치면 다음 줄로 감싸 모든 메뉴가 보이게 한다. */
   .topbar {
-    padding: 10px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-bottom: 0;
+  }
+
+  .nav {
+    gap: 4px 16px;
+    padding-bottom: 8px;
+    white-space: nowrap;
+  }
+
+  .nav a,
+  .nav button.link {
+    padding-block: 4px;
+  }
+
+  .nav .who {
+    display: none;
+  }
+
+  .nav .btn.small {
+    padding: 4px 10px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .stepper li {
+    padding: 8px 10px 8px 20px;
+    font-size: 0.85em;
+  }
+
+  .stepper li span {
+    display: none;
+  }
+
+  .metric {
+    grid-template-columns: 64px 1fr auto;
+    gap: 8px;
+  }
+
+  .kpi {
+    font-size: 1.6rem;
+  }
+
+  .form.inline label {
+    min-width: calc(50% - 7px);
+  }
+
+  .form.inline .btn {
+    width: 100%;
+  }
+
+  .estimate {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .toast {
+    left: calc(16px + env(safe-area-inset-left, 0px));
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    max-width: none;
+  }
+
+  .hero .actions {
+    flex-wrap: wrap;
   }
 
   .hero {
@@ -788,10 +972,6 @@ ul.plain li {
 
   .hero h1 {
     font-size: 1.7rem;
-  }
-
-  .stepper li {
-    padding: 10px 18px;
   }
 
   .score-summary {
@@ -813,6 +993,16 @@ ul.plain li {
   }
 
   body {
-    background: #fff;
+    background: var(--card);
   }
+}
+
+/* 노치가 있는 휴대폰에서 고정 헤더 위 상태표시줄 영역을 헤더 색으로 채운다. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--card);
 }

@@ -31,6 +31,15 @@ npm test
 
 데모 계정: 관리자 `admin@demo.local`, 고객 `h-pharma@demo.local`, `g-ai@demo.local`
 
+### 모바일·서버 없는 데모
+
+```bash
+node scripts/build-demo.js   # dist/demo.html
+```
+
+화면 코드(`public/`)와 진단·비용·재무지표 로직(`src/`)은 그대로 쓰고, `/api` 호출만 `demo/mock-api.js`가 브라우저 안에서 처리하는 단일 HTML을 만듭니다.
+데이터는 그 브라우저의 localStorage에만 저장되며, 로그인 화면에서 데모 계정으로 바로 들어갈 수 있습니다.
+
 ### 환경 변수
 
 | 변수 | 설명 |
@@ -54,6 +63,7 @@ src/
   finance.js     재무 KPI 계산
 public/          SPA (바닐라 JS, 해시 라우팅)
 scripts/seed.js  데모 데이터
+scripts/build-demo.js, demo/  서버 없이 동작하는 단일 HTML 데모 빌드
 test/            node:test 단위·API 테스트
 ```
 
